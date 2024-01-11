@@ -12,6 +12,7 @@ export default function Stopwatch() {
   const intervalRef = useRef<number | null>(null); 
   const [laps, setLaps] = useState<number[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
+  const [showTime, setShowTime] = useState(true);
   
   useEffect(() => { 
     if (running) {
@@ -44,6 +45,13 @@ export default function Stopwatch() {
     setLaps([]); 
     setHasStarted(false);
   };
+  const handleStop = () => {
+    setRunning(false);
+    setTime(0);
+    setShowTime(false);
+    setLaps([]); 
+    setHasStarted(false);
+  };
 
   const handleLap = () => {
     setLaps([...laps, time]);
@@ -55,6 +63,7 @@ export default function Stopwatch() {
         setHasStarted(true);
       }
       setRunning(true);
+      setShowTime(true);
     } else {
       setRunning(false);
     }
@@ -64,16 +73,20 @@ export default function Stopwatch() {
     <View style={styles.container}>
       <View style={styles.centeredContent}>
         <Text style={styles.title}>Stopwatch</Text>
-        <Text style={styles.timeDisplay}>{formatTime(time)}</Text>
+        {showTime && <Text style={styles.timeDisplay}>{formatTime(time)}</Text>}
         <StopwatchButton
           onStartStopResume={handleStartStopResume}
           onReset={handleReset}
           onLap={handleLap}
+          onStop={handleStop}
           running={running}
           hasStarted={hasStarted}
         />
         <Text style={styles.instructions}>
-          Press 'Start' to begin timing, 'Stop' to pause, and 'Reset' to clear! Thanks for using my app!
+          Press 'Start' to begin, 'Pause' to pause, 'Lap' to record laps, 'Reset' to clear, and 'Stop' to stop!
+        </Text>
+        <Text style={styles.josh}>
+          Thanks for using my app.
         </Text>
       </View>
       <Text style={styles.instructions}>
@@ -121,7 +134,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   lapScrollView: {
-    maxHeight: 200, // Adjust the maximum height as needed
+    maxHeight: 200, 
     width: '100%',
   },
   lapScrollViewContent: {
